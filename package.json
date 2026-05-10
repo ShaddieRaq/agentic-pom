@@ -1,5 +1,5 @@
 {
-  "name": "test_app",
+  "name": "agentic-pom",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -9,7 +9,15 @@
   "engines": {
     "node": ">=20"
   },
-  "description": "A curated library of minimal web applications serving as test targets for a Playwright-based testing framework.",
+  "description": "AI-agent-driven Playwright Page Object generator. Point pw-crawl at a URL and get back typed page-object code, navigation helpers, and an API-dependency manifest.",
+  "homepage": "https://github.com/ShaddieRaq/agentic-pom",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShaddieRaq/agentic-pom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ShaddieRaq/agentic-pom/issues"
+  },
   "scripts": {
     "install:all": "for dir in apps/vanilla-html apps/react-app apps/vue-app apps/angular-app apps/svelte-app apps/nextjs-app apps/lit-app; do echo \"Installing $dir...\" && (cd $dir && npm install); done",
     "generate-shared": "node scripts/generate-vanilla-shared.mjs",
@@ -24,8 +32,24 @@
     "test:counts:update": "node scripts/verify-test-counts.mjs --update",
     "prepare": "husky"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "playwright",
+    "page-object",
+    "page-object-model",
+    "pom",
+    "ai-agent",
+    "claude",
+    "anthropic",
+    "mcp",
+    "model-context-protocol",
+    "test-generation",
+    "e2e",
+    "end-to-end",
+    "browser-automation",
+    "code-generation",
+    "playwright-elements"
+  ],
+  "author": "Rashad Colebrooke",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^10.0.1",

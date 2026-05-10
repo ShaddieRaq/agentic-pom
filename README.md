@@ -1,143 +1,153 @@
-# Test Target Application Library
+# agentic-pom
 
-[![CI](https://github.com/AaronJessen/playwright-elements/actions/workflows/ci.yml/badge.svg)](https://github.com/AaronJessen/playwright-elements/actions/workflows/ci.yml)
+> **An AI-agent-driven Playwright Page Object generator.** Point it at a URL, hand it credentials if the app needs them, and get back a typed TypeScript page-object suite — including login flow, navigation helpers, typed wrappers for `<select>` / date pickers, and an API-dependency manifest.
 
-> **GeneralStore** — A collection of minimal web apps implementing a fictional storefront, built with different frontend technologies. These apps serve as stable, predictable test targets for a standardized Playwright-based testing framework.
+[![Tests](https://img.shields.io/badge/tests-1940%20passing-brightgreen)](#)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-blue)](.nvmrc)
 
----
+## What it does
 
-## Quick Start
+You run:
 
 ```bash
-# Prerequisites
-node -v   # Must be Node 20 LTS (see .nvmrc)
-nvm use   # If using nvm
-
-# Install everything (root + all 7 apps + framework + crawler)
-npm install && npm run install:all
-
-# Start all apps simultaneously
-npm run start:all
-
-# Or start a single app
-cd apps/vanilla-html && npm start
+npx pw-crawl explore https://app.example.com \
+  --mcp --ai-agent --ai-model claude-sonnet-4-6 \
+  --credentials-file .auth/credentials.json \
+  --output ./.pom
 ```
 
-> **Troubleshooting:** All commands above must be run from the repository root (`test_app/`). If you see `concurrently: command not found`, run `npm install` at the repo root first.
-
----
-
-## App Catalog
-
-| App | Technology | Port | Start Command | Status |
-|-----|-----------|------|---------------|--------|
-| `vanilla-html` | HTML / CSS / JS (no framework) | 3001 | `npx serve -l 3001` | ✅ Done |
-| `react-app` | React 19 + TypeScript (Vite 7) | 3002 | `vite --port 3002` | ✅ Done |
-| `vue-app` | Vue 3.5 + TypeScript (Vite 7) | 3003 | `vite --port 3003` | ✅ Done |
-| `angular-app` | Angular 19 (Angular CLI) | 3004 | `ng serve --port 3004` | ✅ Done |
-| `svelte-app` | Svelte 5+ (Vite 7) | 3005 | `vite --port 3005` | ✅ Done |
-| `nextjs-app` | Next.js 16 (SSR, App Router) | 3006 | `next dev -p 3006` | ✅ Done |
-| `lit-app` | Lit 3 (Web Components, Vite 7) | 3007 | `vite --port 3007` | ✅ Done |
-
-> **HTMX deferred:** An `htmx-app` was originally planned but deferred from v0.1. The 7 apps above provide sufficient technology diversity.
-
-### Implementation Notes
-
-- **Vanilla HTML:** Reference implementation — plain HTML/CSS/JS, native `<dialog>`, native `<input type="date">`, hash-based routing. All elements identified by semantic HTML, ARIA attributes, and CSS classes.
-- **React app:** React 19, react-router-dom (HashRouter), MUI (TextField, Select, Checkbox, RadioGroup, Table, Dialog, Snackbar), react-datepicker for date picker.
-- **Vue app:** Vue 3.5 Composition API, vue-router 4 (hash history), Vuetify (v-text-field, v-select, v-checkbox, v-radio-group, v-data-table, v-dialog, v-snackbar), @vuepic/vue-datepicker.
-- **Angular app:** Angular 19 standalone components, Angular Router (hash location), Angular Material (mat-form-field, mat-select, mat-checkbox, mat-radio-group, mat-table + matSort, MatDialog, MatSnackBar, mat-datepicker).
-- **Svelte app:** Svelte 5+, hash-based routing, Bits UI (Select, Checkbox, RadioGroup, Dialog), flatpickr for date picker, custom `$state`-based toast.
-- **Next.js app:** Next.js 16 (App Router, SSR dev mode), MUI (same component set as React app), react-datepicker, react-hot-toast, server/client component split.
-- **Lit app:** Lit 3, Vite 7, TypeScript. Shoelace form controls (sl-input, sl-select, sl-checkbox, sl-radio-group) in shadow DOM, custom Lit web components for dialog and toast, native `<input type="date">`. Hash-based routing.
-
----
-
-## Compatibility Matrix
-
-| App | Port | Status | Notes |
-|-----|------|--------|-------|
-| vanilla-html | 3001 | ✅ | Reference implementation — all contract elements pass |
-| react-app | 3002 | ✅ | MUI (TextField, Select, Checkbox, RadioGroup, Table, Dialog, Snackbar) + react-datepicker |
-| vue-app | 3003 | ✅ | Vuetify (v-text-field, v-select, v-checkbox, v-radio-group, v-data-table, v-dialog, v-snackbar) + vue-datepicker |
-| angular-app | 3004 | ✅ | Angular Material (mat-form-field, mat-select, mat-checkbox, mat-radio-group, mat-table, MatDialog, MatSnackBar, mat-datepicker) |
-| svelte-app | 3005 | ✅ | Bits UI (Select, Checkbox, RadioGroup, Dialog) + flatpickr + custom `$state` toast |
-| nextjs-app | 3006 | ✅ | MUI (same as react-app) + react-datepicker + react-hot-toast |
-| lit-app | 3007 | ✅ | Shoelace (sl-input, sl-select, sl-checkbox, sl-radio-group) + custom Lit dialog/toast + native date input |
-
----
-
-## What Is GeneralStore?
-
-Every app implements the same fictional **GeneralStore** mini storefront:
-
-- **Home page** — Product catalog with a data table, search/filter, category dropdown, quantity stepper, "Add to Cart" button, shipping options, and delivery date picker.
-- **About page** — A short description of the store.
-
-The apps are intentionally trivial. They exist to provide a consistent, testable surface across different rendering paradigms (virtual DOM, reactive, compiled, web components). Elements are identified by **semantic HTML, ARIA attributes, and CSS classes** (not `data-testid`) — see [REQUIREMENTS.md §6](docs/REQUIREMENTS.md) for the full element identification reference.
-
----
-
-## Project Structure
+You get a folder of Playwright Page Objects:
 
 ```
-test_app/
-├── apps/
-│   ├── vanilla-html/       ← plain HTML/CSS/JS, no build step
-│   ├── react-app/           ← React (Vite)
-│   ├── vue-app/             ← Vue 3 (Vite)
-│   ├── angular-app/         ← Angular (Angular CLI)
-│   ├── svelte-app/          ← Svelte (Vite)
-│   ├── nextjs-app/          ← Next.js (SSR dev mode)
-│   └── lit-app/             ← Lit web components
-├── framework/               ← Playwright element interaction library
-│   ├── src/                 ← By class, handler registry, group element, typed wrappers
-│   ├── tests/               ← 1,064 integration + 312 unit tests
-│   └── playwright.config.ts
-├── tools/crawler/           ← Runtime page crawler + page object emitter
+.pom/
+├── pages/
+│   ├── home.ts              # login form + goToInventory(page) helper
+│   ├── inventory.ts         # productSort: select(...), inventoryList, goToInventoryItem()
+│   ├── inventoryItem.ts     # productDetailCard, goToInventory() (back-button)
+│   └── shared-components.ts # nav/footer/header extracted across pages
+└── manifests/
+    ├── home.manifest.json
+    └── inventory.manifest.json
+```
+
+…and immediately runnable tests:
+
+```ts
+import { homePage, inventoryPage, goToInventory } from "./.pom/pages/home";
+
+test("buys a backpack", async ({ page }) => {
+  await page.goto("https://app.example.com");
+  await goToInventory(page);                                // logs in, waits for /inventory
+  const inv = inventoryPage(page);
+  await inv.productSort.choose("Price (low to high)");      // typed select wrapper
+  await inv.inventoryList.click("Sauce Labs Backpack");
+});
+```
+
+## How it works
+
+A Claude-driven exploration agent picks browser actions one at a time (`click_candidate`, `fill_candidate`, `navigate`, `stop`) over a Playwright transport. Each step rescans the DOM, attributes API calls to actions, and accumulates a per-route manifest. The emitter turns the manifest into typed page-object code that imports from the [`@playwright-elements/core`](framework/) framework.
+
+Three modes:
+
+- **`--ai-agent`** — Claude tool-use loop drives the browser (recommended).
+- **`--mcp`** — routes browser actions through Microsoft's [`@playwright/mcp`](https://github.com/microsoft/playwright-mcp) server. Useful when you want to plug in to other MCP-compatible agents.
+- **(no flags)** — heuristic exploration, no AI calls. Fastest, dumbest path. Good for sanity checks.
+
+A separate **drift** subcommand replays the recorded action graph against the live app and surfaces page-object regressions:
+
+```bash
+npx pw-crawl drift ./.pom --repair         # AI-assisted locator updates when something changed
+```
+
+## When to use this
+
+- ✅ You have a real running web app and want a baseline Playwright POM in minutes, not days.
+- ✅ The app has a login flow you can express as a `{KEY: value}` credentials map.
+- ✅ You want **typed** page objects (`inv.productSort.choose("...")`), not raw locators.
+- ✅ You want API-call assertions wired up automatically (`waitForResponse(/users\/me/)` etc.).
+
+## When NOT to use this
+
+- ❌ The app is behind a Cloudflare bot challenge or similar headless-browser block.
+- ❌ The app's primary interactions are non-DOM (canvas, WebGL, deep keyboard-only flows).
+- ❌ You need pixel-perfect snapshots (this is a structural tool — pair with visual-regression for that).
+
+## Quick start
+
+```bash
+git clone https://github.com/ShaddieRaq/agentic-pom.git
+cd agentic-pom
+
+# Install root + all workspace packages
+npm install
+
+# Build the crawler (publishes a tarball you can install in your test project)
+cd tools/crawler && npm run build && npm pack
+
+# In your downstream project:
+cd /path/to/your/test/project
+npm install /abs/path/to/agentic-pom/tools/crawler/playwright-elements-crawler-0.1.0.tgz
+npx playwright install chromium
+
+# Set your Anthropic key
+export ANTHROPIC_API_KEY=sk-ant-…
+
+# Optional: credentials for forms the agent will fill
+mkdir -p .auth && echo '{"USER":"standard_user","PASS":"secret_sauce"}' > .auth/credentials.json
+
+# Crawl
+npx pw-crawl explore https://www.saucedemo.com/ \
+  --mcp --ai-agent --ai-model claude-sonnet-4-6 \
+  --credentials-file .auth/credentials.json \
+  --max-actions 20 --output .pom
+```
+
+## Limitations (read this before launching)
+
+- **Bot detection trips it up.** Sites running Cloudflare's "Verify you are human" challenge will time out at navigation. Manual workaround: log in once with `pw-crawl auth-setup`, then explore with `--auth-state`.
+- **`--mcp` + `--auth-state` together are unsupported.** The CLI auto-falls back to direct Playwright in that combination and prints a warning.
+- **First exploration of a login form may double-attempt fills/clicks.** The agent retries with a different locator when its first synthesized locator misses. This costs ~3-4 actions of the budget. Not a correctness issue.
+- **Group property names favor stability over readability** when the underlying selector is a structural class. `headerSecondaryContainer` reads worse than `productsToolbar`, but it stays identical across runs.
+- **Credentials never leave your machine in plaintext to the model.** Values are looked up at dispatch time from a local file; the model only sees `{{KEY}}` placeholder names.
+
+## Project layout
+
+This repo is a monorepo with two published packages and a curated set of fixture apps used to validate the framework.
+
+```
+agentic-pom/
+├── tools/crawler/          # ← @playwright-elements/crawler — pw-crawl CLI
+├── framework/              # ← @playwright-elements/core — runtime label-first wrapper
+├── apps/                   # ← 7 fixture apps (vanilla, React, Vue, Angular, Svelte, Next, Lit) used as test targets
 ├── docs/
-│   ├── CONTRIBUTING.md      ← start here — onboarding guide
-│   ├── REQUIREMENTS.md      ← goals, UI contract, conventions
-│   ├── ROADMAP.md           ← phase summary + open phases
-│   └── archive/             ← historical docs (completed checklists, closed issues)
-├── .nvmrc                   ← Node 20 LTS
-├── .gitignore
-├── package.json             ← root package with start:all script
-└── README.md                ← this file
+│   ├── REQUIREMENTS.md
+│   ├── ROADMAP.md
+│   └── AUTOPOM-MCP-EXPLORATION-PLAN.md   ← design doc for the exploration agent
+├── AGENTS.md               # ← instructions for AI coding agents working in this repo
+└── README.md
 ```
 
----
+## Two libraries, one story
 
-## Framework Library
+- **[`@playwright-elements/core`](framework/)** — runtime label-first wrapper around Playwright. `await loginForm.write("Email", value)` instead of CSS selectors. Auto-detects element types via a handler registry.
+- **[`@playwright-elements/crawler`](tools/crawler/)** — the `pw-crawl` CLI. Drives a real browser with an exploration agent, captures the DOM + network behavior, generates code that imports from the framework.
 
-The `framework/` directory contains a **Playwright-based element interaction library** built on top of the test apps. Key features:
+The crawler is the headline; the framework is what makes the generated code worth reading.
 
-- **Label-first identification** — `write("Category", "Electronics")` instead of raw locators
-- **Auto-detection** — handler registry classifies elements (checkbox, select, radio group, etc.) automatically
-- **Group element** — `write()`, `read()`, `writeAll()`, `readAll()`, `click()`, `find()` for any container
-- **Typed wrappers** — `table.sort()`, `stepper.increment()`, `dialog.close()` for rich behaviour
-- **1,940 tests passing** — framework: 1,064 integration (7 apps) + 312 unit; crawler: 329 integration (7 apps) + 235 unit
+## Tests
 
-See [`framework/README.md`](framework/README.md) for full API documentation.
+```bash
+npx playwright test --config=playwright.unit.config.ts   # unit (235 crawler + 312 framework)
+npx playwright test                                      # integration (1,393 across 7 apps)
+```
 
----
+**1,940 tests passing** as of the latest commit.
 
-## Documentation
+## License
 
-| Document | Purpose |
-|----------|---------|
-| [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) | **Start here** — onboarding, setup, how to run tests, how to add apps |
-| [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) | Goals, architecture, UI contract, conventions, resolved decisions |
-| [docs/ROADMAP.md](docs/ROADMAP.md) | Phase summary table (all phases complete) |
-| [framework/README.md](framework/README.md) | Framework API documentation |
-| [tools/crawler/README.md](tools/crawler/README.md) | Crawler & page object emitter documentation |
-| [docs/archive/](docs/archive/) | Historical docs — completed checklists, closed issues, superseded reviews |
+ISC. See [LICENSE](LICENSE).
 
 ---
 
-## Key Conventions
-
-- **Semantic identification is the contract.** Every testable element is identified by semantic HTML, ARIA attributes, CSS classes, and labels — no `data-testid`. See [REQUIREMENTS.md §6](docs/REQUIREMENTS.md).
-- **No runtime network requests.** All libraries are bundled locally. Async behavior uses `setTimeout` / `Promise`.
-- **One command to start:** `cd apps/<app-name> && npm install && npm start`.
-- **Lockfiles committed.** Every app's `package-lock.json` is checked in for reproducible installs.
+Built as a passion project. Star the repo if it saves you a day of writing locators.

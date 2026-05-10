@@ -2,8 +2,18 @@
   "name": "@playwright-elements/crawler",
   "version": "0.1.0",
   "private": true,
-  "description": "Runtime crawler that discovers groups and containers on a live page and emits a JSON manifest",
+  "description": "AI-agent-driven Playwright Page Object generator. The pw-crawl CLI explores a live web app with a Claude tool-use loop and emits typed TypeScript page objects, navigation helpers, and an API-dependency manifest.",
   "license": "MIT",
+  "homepage": "https://github.com/ShaddieRaq/agentic-pom/tree/main/tools/crawler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShaddieRaq/agentic-pom.git",
+    "directory": "tools/crawler"
+  },
+  "bugs": {
+    "url": "https://github.com/ShaddieRaq/agentic-pom/issues"
+  },
+  "author": "Rashad Colebrooke",
   "engines": {
     "node": ">=20.19"
   },
@@ -49,10 +59,22 @@
   },
   "keywords": [
     "playwright",
-    "crawler",
     "page-object",
-    "manifest",
+    "page-object-model",
+    "pom",
+    "ai-agent",
+    "agentic",
+    "claude",
+    "anthropic",
+    "mcp",
+    "model-context-protocol",
+    "test-generation",
+    "code-generation",
+    "browser-automation",
+    "crawler",
     "e2e",
-    "testing"
+    "end-to-end",
+    "testing",
+    "playwright-elements"
   ]
 }
