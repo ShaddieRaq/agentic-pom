@@ -14,7 +14,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "bits-ui": "~2.16.3",
+    "bits-ui": "~2.18.1",
     "flatpickr": "~4.6.13",
     "svelte": "~5.51.2"
   },
